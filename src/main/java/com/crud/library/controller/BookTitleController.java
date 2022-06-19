@@ -33,8 +33,8 @@ public class BookTitleController {
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Void> addNewBookTitle(@RequestBody BookTitleDto bookTitleDto) {
-        BookTitle book = bookTitleMapper.mapToBookTitle(bookTitleDto);
-        service.saveBookTitle(book);
+        BookTitle bookTitle = bookTitleMapper.mapToBookTitle(bookTitleDto);
+        service.saveBookTitle(bookTitle);
         return ResponseEntity.ok().build();
     }
 
