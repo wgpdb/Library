@@ -1,7 +1,6 @@
 package com.crud.library.domain.dto;
 
 import com.crud.library.domain.BookStatus;
-import com.crud.library.domain.BookTitle;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -10,6 +9,6 @@ import lombok.Getter;
 public class BookDto {
 
     private Long bookId;
-    private BookTitle bookTitle;
+    private Long bookTitleId;
     private BookStatus bookStatus;
 }

@@ -5,6 +5,10 @@ import com.crud.library.domain.Library;
 import com.crud.library.domain.Member;
 import com.crud.library.domain.dto.LibraryDto;
 import com.crud.library.domain.dto.LibraryBookIssueDto;
+import com.crud.library.exception.BookNotFoundException;
+import com.crud.library.exception.MemberNotFoundException;
+import com.crud.library.service.BookDbService;
+import com.crud.library.service.MemberDbService;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -13,11 +17,14 @@ import java.util.stream.Collectors;
 @Service
 public class LibraryMapper {
 
-    public Library mapToLibrary(final LibraryDto libraryDto) {
+    private BookDbService bookDbService;
+    private MemberDbService memberDbService;
+
+    public Library mapToLibrary(final LibraryDto libraryDto) throws BookNotFoundException, MemberNotFoundException {
         return new Library(
                 libraryDto.getLibraryId(),
-                libraryDto.getBook(),
-                libraryDto.getMember(),
+                bookDbService.getBook(libraryDto.getBookId()),
+                memberDbService.getMember(libraryDto.getMemberId()),
                 libraryDto.getIssueDate(),
                 libraryDto.getReturnDate()
         );
@@ -37,8 +44,8 @@ public class LibraryMapper {
     public LibraryDto mapToLibraryDto(final Library library) {
         return new LibraryDto(
                 library.getLibraryId(),
-                library.getBook(),
-                library.getMember(),
+                library.getBook().getBookId(),
+                library.getMember().getMemberId(),
                 library.getIssueDate(),
                 library.getReturnDate()
         );

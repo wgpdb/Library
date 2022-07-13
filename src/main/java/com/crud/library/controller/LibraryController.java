@@ -57,7 +57,8 @@ public class LibraryController {
     }
 
     @PutMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<LibraryDto> updateIssueBook(@RequestBody LibraryDto libraryDto) {
+    public ResponseEntity<LibraryDto> updateIssueBook(@RequestBody LibraryDto libraryDto)
+            throws BookNotFoundException, MemberNotFoundException {
         Library bookReturn = libraryMapper.mapToLibrary(libraryDto);
         Library bookIssue = libraryDbService.saveBookIssue(bookReturn);
         return ResponseEntity.ok(libraryMapper.mapToLibraryDto(bookIssue));
