@@ -19,6 +19,8 @@ import org.springframework.web.bind.annotation.*;
 import java.time.LocalDate;
 import java.util.List;
 
+import static org.springframework.http.ResponseEntity.ok;
+
 @RestController
 @RequestMapping("/v1/library")
 @RequiredArgsConstructor
@@ -32,13 +34,13 @@ public class LibraryController {
     @GetMapping(value = "{bookIssueId}")
     public ResponseEntity<LibraryDto> getIssuedBook(@PathVariable Long bookIssueId)
             throws BookIssueNotFoundException {
-        return ResponseEntity.ok(libraryMapper.mapToLibraryDto(libraryDbService.getIssuedBook(bookIssueId)));
+        return ok(libraryMapper.mapToLibraryDto(libraryDbService.getIssuedBook(bookIssueId)));
     }
 
     @GetMapping
     public ResponseEntity<List<LibraryDto>> getAllIssuedBooks() {
         List<Library> issuedBooks = libraryDbService.getAllIssuedBooks();
-        return ResponseEntity.ok(libraryMapper.mapToLibraryDtoList(issuedBooks));
+        return ok(libraryMapper.mapToLibraryDtoList(issuedBooks));
     }
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, value = "issue")
@@ -50,7 +52,7 @@ public class LibraryController {
             Member member = memberDbService.getMember(libraryBookIssueDto.getMemberId());
             Library bookIssue = libraryMapper.mapToLibraryBookIssue(libraryBookIssueDto, book, member);
             libraryDbService.saveBookIssue(bookIssue);
-            return ResponseEntity.ok(libraryMapper.mapToLibraryDto(bookIssue));
+            return ok(libraryMapper.mapToLibraryDto(bookIssue));
         } else {
             throw new BookNotAvailableException();
         }
@@ -61,7 +63,7 @@ public class LibraryController {
             throws BookNotFoundException, MemberNotFoundException {
         Library bookReturn = libraryMapper.mapToLibrary(libraryDto);
         Library bookIssue = libraryDbService.saveBookIssue(bookReturn);
-        return ResponseEntity.ok(libraryMapper.mapToLibraryDto(bookIssue));
+        return ok(libraryMapper.mapToLibraryDto(bookIssue));
     }
 
     @PutMapping(value = "return/{libraryId}")
@@ -73,7 +75,7 @@ public class LibraryController {
             Library bookReturn = libraryDbService.getIssuedBook(libraryId);
             bookReturn.setReturnDate(LocalDate.now());
             libraryDbService.saveBookReturn(bookReturn);
-            return ResponseEntity.ok().build();
+            return ok().build();
         } else {
             throw new BookNotIssuedException();
         }
@@ -82,6 +84,6 @@ public class LibraryController {
     @DeleteMapping(value = "{bookIssueId}")
     public ResponseEntity<Void> deleteBookIssue(@PathVariable Long bookIssueId) {
         libraryDbService.deleteBookIssue(bookIssueId);
-        return ResponseEntity.ok().build();
+        return ok().build();
     }
 }

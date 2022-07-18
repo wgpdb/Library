@@ -1,0 +1,11 @@
+version: '2.6.1'
+
+services:
+
+  db:
+    image: mysql:latest
+    environment:
+      MYSQL_DATABASE: library_crud
+      MYSQL_ROOT_PASSWORD: LibraryCrudUser123
+    ports:
+      - 3306:3306

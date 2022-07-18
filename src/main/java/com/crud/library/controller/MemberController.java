@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+import static org.springframework.http.ResponseEntity.ok;
+
 @RestController
 @RequestMapping("/v1/members")
 @RequiredArgsConstructor
@@ -22,32 +24,32 @@ public class MemberController {
 
     @GetMapping(value = "{memberId}")
     public ResponseEntity<MemberDto> getMember(@PathVariable Long memberId) throws MemberNotFoundException {
-        return ResponseEntity.ok(memberMapper.mapToMemberDto(service.getMember(memberId)));
+        return ok(memberMapper.mapToMemberDto(service.getMember(memberId)));
     }
 
     @GetMapping
     public ResponseEntity<List<MemberDto>> getMembers() {
         List<Member> members = service.getAllMembers();
-        return ResponseEntity.ok(memberMapper.mapToMemberDtoList(members));
+        return ok(memberMapper.mapToMemberDtoList(members));
     }
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Void> addNewMember(@RequestBody MemberDto memberDto) {
         Member member = memberMapper.mapToMember(memberDto);
         service.saveMember(member);
-        return ResponseEntity.ok().build();
+        return ok().build();
     }
 
     @PutMapping
     public ResponseEntity<MemberDto> updateMember(@RequestBody MemberDto memberDto) {
         Member member = memberMapper.mapToMember(memberDto);
         Member savedMember = service.saveMember(member);
-        return ResponseEntity.ok(memberMapper.mapToMemberDto(savedMember));
+        return ok(memberMapper.mapToMemberDto(savedMember));
     }
 
     @DeleteMapping(value = "{memberId}")
     public ResponseEntity<Void> deleteMember(@PathVariable Long memberId) {
         service.deleteMember(memberId);
-        return ResponseEntity.ok().build();
+        return ok().build();
     }
 }

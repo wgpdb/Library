@@ -18,6 +18,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+import static org.springframework.http.ResponseEntity.ok;
+
 @RestController
 @RequestMapping("/v1/books")
 @RequiredArgsConstructor
@@ -29,27 +31,27 @@ public class BookController {
 
     @GetMapping(value = "{bookId}")
     public ResponseEntity<BookDto> getBook(@PathVariable Long bookId) throws BookNotFoundException {
-        return ResponseEntity.ok(bookMapper.mapToBookDto(bookDbService.getBook(bookId)));
+        return ok(bookMapper.mapToBookDto(bookDbService.getBook(bookId)));
     }
 
     @GetMapping
     public ResponseEntity<List<BookDto>> getAllBooks() {
         List<Book> books = bookDbService.getAllBooks();
-        return ResponseEntity.ok(bookMapper.mapToBookDtoList(books));
+        return ok(bookMapper.mapToBookDtoList(books));
     }
 
     @GetMapping(value = "status/{status}")
     public ResponseEntity<List<BookDto>> getBooksByStatus(@PathVariable String status)
             throws BookStatusDoesNotExistException {
         List<Book> books = bookDbService.getBooksByStatus(status);
-        return ResponseEntity.ok(bookMapper.mapToBookDtoList(books));
+        return ok(bookMapper.mapToBookDtoList(books));
     }
 
     @GetMapping(value = "status/{status}/count")
     public ResponseEntity<Long> getBooksCountByStatus(@PathVariable String status)
             throws BookStatusDoesNotExistException {
         long booksCount = bookDbService.getBooksCountByStatus(status);
-        return ResponseEntity.ok(booksCount);
+        return ok(booksCount);
     }
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
@@ -58,7 +60,7 @@ public class BookController {
         BookTitle bookTitle = bookTitleDbService.getBookTitle(createBookDto.getBookTitleId());
         Book book = bookMapper.mapToCreatedBook(createBookDto, bookTitle);
         bookDbService.saveBook(book);
-        return ResponseEntity.ok(book.getBookId());
+        return ok(book.getBookId());
     }
 
     @PutMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
@@ -67,7 +69,7 @@ public class BookController {
         BookTitle bookTitle = bookTitleDbService.getBookTitle(createBookDto.getBookTitleId());
         Book book = bookMapper.mapToCreatedBook(createBookDto, bookTitle);
         Book savedBook = bookDbService.updateBook(book);
-        return ResponseEntity.ok(bookMapper.mapToBookDto(savedBook));
+        return ok(bookMapper.mapToBookDto(savedBook));
     }
 
     @PatchMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
@@ -79,12 +81,12 @@ public class BookController {
         BookTitle bookTitle = bookTitleDbService.getBookTitle(bookTitleId);
         Book book = bookMapper.mapToUpdateBookStatus(updateBookStatusDto, bookTitle);
         Book savedBook = bookDbService.updateBook(book);
-        return ResponseEntity.ok(bookMapper.mapToBookDto(savedBook));
+        return ok(bookMapper.mapToBookDto(savedBook));
     }
 
     @DeleteMapping(value = "{bookId}")
     public ResponseEntity<Void> deleteBook(@PathVariable Long bookId) {
         bookDbService.deleteBook(bookId);
-        return ResponseEntity.ok().build();
+        return ok().build();
     }
 }
