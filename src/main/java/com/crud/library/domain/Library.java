@@ -1,6 +1,7 @@
 package com.crud.library.domain;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
@@ -11,6 +12,7 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
+@Builder
 @Entity
 @Table(name = "issued_books")
 public class Library {
@@ -28,7 +30,7 @@ public class Library {
     @JoinColumn(name = "member_id")
     private Member member;
 
-    @Column(name = "date_issued")
+    @Column(name = "date_issued", nullable = false, updatable = false)
     @CreationTimestamp
     private LocalDate issueDate;
 

@@ -6,8 +6,8 @@ import javax.persistence.*;
 
 @AllArgsConstructor
 @NoArgsConstructor
-@Setter
-@Getter
+@Data
+@Builder
 @Entity
 @Table(name = "books")
 public class Book {
@@ -17,7 +17,7 @@ public class Book {
     @Column(name = "book_id")
     private Long bookId;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne/*(cascade = CascadeType.ALL)*/
     @JoinColumn(name = "book_title_id")
     private BookTitle bookTitle;
 

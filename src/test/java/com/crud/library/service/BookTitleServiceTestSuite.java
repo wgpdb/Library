@@ -1,6 +1,9 @@
 package com.crud.library.service;
 
+import com.crud.library.domain.Book;
+import com.crud.library.domain.BookStatus;
 import com.crud.library.domain.BookTitle;
+import com.crud.library.exception.BookNotFoundException;
 import com.crud.library.exception.BookTitleNotFoundException;
 import com.crud.library.repository.BookTitleRepository;
 import org.junit.jupiter.api.AfterEach;
@@ -13,21 +16,20 @@ import org.testcontainers.containers.MySQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 @Testcontainers
 public class BookTitleServiceTestSuite {
 
     @Autowired
-    BookTitleDbService bookTitleDbService;
+    private BookTitleDbService bookTitleDbService;
 
     @Autowired
-    BookTitleRepository bookTitleRepository;
+    private BookTitleRepository bookTitleRepository;
 
     @Container
-    private static MySQLContainer container = new MySQLContainer("mysql:8.0.29");
+    private static MySQLContainer container = new MySQLContainer("mysql:latest");
 
     @DynamicPropertySource
     public static void overrideProps(DynamicPropertyRegistry registry) {
@@ -44,16 +46,15 @@ public class BookTitleServiceTestSuite {
     @Test
     void testGetBook() throws BookTitleNotFoundException {
         //Given
-        BookTitle book = new BookTitle(
-                1L,
-                "Title",
-                "Author",
-                2010,
-                null);
+        BookTitle bookTitle = BookTitle.builder()
+                .bookTitle("Title")
+                .bookAuthor("Author")
+                .yearPublished(2010)
+                .build();
 
         //When
-        bookTitleDbService.saveBookTitle(book);
-        Long id = book.getBookTitleId();
+        bookTitleDbService.saveBookTitle(bookTitle);
+        Long id = bookTitle.getBookTitleId();
 
         //Then
         assertNotNull(bookTitleDbService.getBookTitle(id));
@@ -63,29 +64,64 @@ public class BookTitleServiceTestSuite {
     }
 
     @Test
-    void testGetAllBookTitles() {
+    void testBookTitleNotFoundException() {
         //Given
-        BookTitle bookOne = new BookTitle(
-                2L,
-                "Title One",
-                "Author",
-                2010,
-                null
-        );
+        BookTitle bookTitle = BookTitle.builder()
+                .bookTitle("Title")
+                .bookAuthor("Author")
+                .yearPublished(2010)
+                .build();
 
-        BookTitle bookTwo = new BookTitle(
-                3L,
-                "Title Two",
-                "Author",
-                1999,
-                null
-        );
+        bookTitleDbService.saveBookTitle(bookTitle);
+        Long id = bookTitle.getBookTitleId();
 
         //When
-        bookTitleDbService.saveBookTitle(bookOne);
-        bookTitleDbService.saveBookTitle(bookTwo);
+        Long nonexistentId = id + 1;
+
+        //Then
+        assertTrue(bookTitleRepository.existsById(id));
+        assertThrows(BookTitleNotFoundException.class, () -> bookTitleDbService.getBookTitle(nonexistentId));
+    }
+
+    @Test
+    void testGetAllBookTitles() {
+        //Given
+        BookTitle bookTitleOne = BookTitle.builder()
+                .bookTitle("Title One")
+                .bookAuthor("Author One")
+                .yearPublished(2010)
+                .build();
+
+        BookTitle bookTitleTwo = BookTitle.builder()
+                .bookTitle("Title Two")
+                .bookAuthor("Author Two")
+                .yearPublished(1999)
+                .build();
+
+        //When
+        bookTitleDbService.saveBookTitle(bookTitleOne);
+        bookTitleDbService.saveBookTitle(bookTitleTwo);
 
         //Then
         assertEquals(2, bookTitleDbService.getAllBookTitles().size());
+    }
+
+    @Test
+    void testDeleteBookTitle() {
+        //Given
+        BookTitle bookTitle = BookTitle.builder()
+                .bookTitle("Title")
+                .bookAuthor("Author")
+                .yearPublished(2010)
+                .build();
+
+        bookTitleDbService.saveBookTitle(bookTitle);
+        Long id = bookTitle.getBookTitleId();
+
+        //When
+        bookTitleDbService.deleteBookTitle(id);
+
+        //Then
+        assertFalse(bookTitleRepository.existsById(id));
     }
 }

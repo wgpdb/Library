@@ -10,6 +10,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
+@Builder
 @Entity
 @Table(name = "book_titles")
 public class BookTitle {
@@ -36,4 +37,10 @@ public class BookTitle {
             fetch = FetchType.LAZY
     )
     private List<Book> books = new ArrayList<>();
+
+    public BookTitle(String bookTitle, String bookAuthor, int yearPublished) {
+        this.bookTitle = bookTitle;
+        this.bookAuthor = bookAuthor;
+        this.yearPublished = yearPublished;
+    }
 }
